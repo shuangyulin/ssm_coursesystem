@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.TeacherMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加教师信息记录 -->
+	<insert id="addTeacher" parameterType="teacher">
+		insert into t_teacher(name,position,password,introduction) values 
+		(#{name},#{position},#{password},#{introduction})
+	</insert>
+
+	<!-- 按照查询条件分页查询教师信息记录 -->
+	<select id="queryTeacher" resultMap="teacherMap" >
+		select t_teacher.* from t_teacher ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="teacherMap" type="teacher">
+        <id property="id" column="id" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有教师信息记录 -->
+	<select id="queryTeacherList" resultMap="teacherMap" >
+		select t_teacher.* from t_teacher ${where}
+	</select>
+
+    <!-- 按照查询条件的教师信息记录数 -->
+	<select id="queryTeacherCount" resultType="int">
+		select count(*) from t_teacher ${where}
+	</select>
+
+	<!-- 根据主键查询某个教师信息记录 -->
+	<select id="getTeacher" parameterType="int" resultMap="teacherMap">
+		select * from t_teacher where t_teacher.id = #{id}
+	</select>
+
+	<!-- 更新教师信息记录 -->
+	<update id="updateTeacher" parameterType="teacher">
+		update t_teacher set name=#{name},position=#{position},password=#{password},introduction=#{introduction} where id = #{id}
+	</update>
+
+	<!-- 删除教师信息记录 -->
+	<delete id="deleteTeacher" parameterType="int">
+		delete from t_teacher where id=#{id}
+	</delete>
+
+</mapper>

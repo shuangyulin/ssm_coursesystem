@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.CourseInfoMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加课程信息记录 -->
+	<insert id="addCourseInfo" parameterType="courseInfo">
+		insert into t_courseInfo(jianjie,dagan) values 
+		(#{jianjie},#{dagan})
+	</insert>
+
+	<!-- 按照查询条件分页查询课程信息记录 -->
+	<select id="queryCourseInfo" resultMap="courseInfoMap" >
+		select t_courseInfo.* from t_courseInfo ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="courseInfoMap" type="courseInfo">
+        <id property="id" column="id" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有课程信息记录 -->
+	<select id="queryCourseInfoList" resultMap="courseInfoMap" >
+		select t_courseInfo.* from t_courseInfo ${where}
+	</select>
+
+    <!-- 按照查询条件的课程信息记录数 -->
+	<select id="queryCourseInfoCount" resultType="int">
+		select count(*) from t_courseInfo ${where}
+	</select>
+
+	<!-- 根据主键查询某个课程信息记录 -->
+	<select id="getCourseInfo" parameterType="int" resultMap="courseInfoMap">
+		select * from t_courseInfo where t_courseInfo.id = #{id}
+	</select>
+
+	<!-- 更新课程信息记录 -->
+	<update id="updateCourseInfo" parameterType="courseInfo">
+		update t_courseInfo set jianjie=#{jianjie},dagan=#{dagan} where id = #{id}
+	</update>
+
+	<!-- 删除课程信息记录 -->
+	<delete id="deleteCourseInfo" parameterType="int">
+		delete from t_courseInfo where id=#{id}
+	</delete>
+
+</mapper>

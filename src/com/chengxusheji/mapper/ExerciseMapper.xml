@@ -1,0 +1,49 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ExerciseMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加习题信息记录 -->
+	<insert id="addExercise" parameterType="exercise">
+		insert into t_exercise(title,chapterId,content,addTime) values 
+		(#{title},#{chapterId.id},#{content},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询习题信息记录 -->
+	<select id="queryExercise" resultMap="exerciseMap" >
+		select t_exercise.* from t_exercise,t_chapter ${where} and t_exercise.chapterId = t_chapter.id limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="exerciseMap" type="exercise">
+        <id property="id" column="id" />
+        <association property="chapterId" column="chapterId" select="com.chengxusheji.mapper.ChapterMapper.getChapter" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有习题信息记录 -->
+	<select id="queryExerciseList" resultMap="exerciseMap" >
+		select t_exercise.* from t_exercise,t_chapter ${where} and t_exercise.chapterId = t_chapter.id
+	</select>
+
+    <!-- 按照查询条件的习题信息记录数 -->
+	<select id="queryExerciseCount" resultType="int">
+		select count(*) from t_exercise,t_chapter ${where} and t_exercise.chapterId = t_chapter.id
+	</select>
+
+	<!-- 根据主键查询某个习题信息记录 -->
+	<select id="getExercise" parameterType="int" resultMap="exerciseMap">
+		select * from t_exercise where t_exercise.id = #{id}
+	</select>
+
+	<!-- 更新习题信息记录 -->
+	<update id="updateExercise" parameterType="exercise">
+		update t_exercise set title=#{title},chapterId=#{chapterId.id},content=#{content},addTime=#{addTime} where id = #{id}
+	</update>
+
+	<!-- 删除习题信息记录 -->
+	<delete id="deleteExercise" parameterType="int">
+		delete from t_exercise where id=#{id}
+	</delete>
+
+</mapper>

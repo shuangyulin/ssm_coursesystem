@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.StudentMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加学生信息记录 -->
+	<insert id="addStudent" parameterType="student">
+		insert into t_student(studentNumber,password,name,sex,birthday,zzmm,className,telephone,photo,address) values 
+		(#{studentNumber},#{password},#{name},#{sex},#{birthday},#{zzmm},#{className},#{telephone},#{photo},#{address})
+	</insert>
+
+	<!-- 按照查询条件分页查询学生信息记录 -->
+	<select id="queryStudent" resultMap="studentMap" >
+		select t_student.* from t_student ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="studentMap" type="student">
+        <id property="studentNumber" column="studentNumber" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有学生信息记录 -->
+	<select id="queryStudentList" resultMap="studentMap" >
+		select t_student.* from t_student ${where}
+	</select>
+
+    <!-- 按照查询条件的学生信息记录数 -->
+	<select id="queryStudentCount" resultType="int">
+		select count(*) from t_student ${where}
+	</select>
+
+	<!-- 根据主键查询某个学生信息记录 -->
+	<select id="getStudent" parameterType="string" resultMap="studentMap">
+		select * from t_student where t_student.studentNumber = #{studentNumber}
+	</select>
+
+	<!-- 更新学生信息记录 -->
+	<update id="updateStudent" parameterType="student">
+		update t_student set password=#{password},name=#{name},sex=#{sex},birthday=#{birthday},zzmm=#{zzmm},className=#{className},telephone=#{telephone},photo=#{photo},address=#{address} where studentNumber = #{studentNumber}
+	</update>
+
+	<!-- 删除学生信息记录 -->
+	<delete id="deleteStudent" parameterType="string">
+		delete from t_student where studentNumber=#{studentNumber}
+	</delete>
+
+</mapper>

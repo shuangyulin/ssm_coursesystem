@@ -1,0 +1,49 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.QuestionMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加在线问答记录 -->
+	<insert id="addQuestion" parameterType="question">
+		insert into t_question(teacherId,questioner,content,reply,addTime) values 
+		(#{teacherId.id},#{questioner},#{content},#{reply},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询在线问答记录 -->
+	<select id="queryQuestion" resultMap="questionMap" >
+		select t_question.* from t_question,t_teacher ${where} and t_question.teacherId = t_teacher.id limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="questionMap" type="question">
+        <id property="id" column="id" />
+        <association property="teacherId" column="teacherId" select="com.chengxusheji.mapper.TeacherMapper.getTeacher" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有在线问答记录 -->
+	<select id="queryQuestionList" resultMap="questionMap" >
+		select t_question.* from t_question,t_teacher ${where} and t_question.teacherId = t_teacher.id
+	</select>
+
+    <!-- 按照查询条件的在线问答记录数 -->
+	<select id="queryQuestionCount" resultType="int">
+		select count(*) from t_question,t_teacher ${where} and t_question.teacherId = t_teacher.id
+	</select>
+
+	<!-- 根据主键查询某个在线问答记录 -->
+	<select id="getQuestion" parameterType="int" resultMap="questionMap">
+		select * from t_question where t_question.id = #{id}
+	</select>
+
+	<!-- 更新在线问答记录 -->
+	<update id="updateQuestion" parameterType="question">
+		update t_question set teacherId=#{teacherId.id},questioner=#{questioner},content=#{content},reply=#{reply},addTime=#{addTime} where id = #{id}
+	</update>
+
+	<!-- 删除在线问答记录 -->
+	<delete id="deleteQuestion" parameterType="int">
+		delete from t_question where id=#{id}
+	</delete>
+
+</mapper>

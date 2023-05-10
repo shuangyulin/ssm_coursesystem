@@ -1,0 +1,49 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.HomeworkTaskMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加作业任务记录 -->
+	<insert id="addHomeworkTask" parameterType="homeworkTask">
+		insert into t_homeworkTask(teacherObj,title,content,addTime) values 
+		(#{teacherObj.id},#{title},#{content},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询作业任务记录 -->
+	<select id="queryHomeworkTask" resultMap="homeworkTaskMap" >
+		select t_homeworkTask.* from t_homeworkTask,t_teacher ${where} and t_homeworkTask.teacherObj = t_teacher.id limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="homeworkTaskMap" type="homeworkTask">
+        <id property="homeworkId" column="homeworkId" />
+        <association property="teacherObj" column="teacherObj" select="com.chengxusheji.mapper.TeacherMapper.getTeacher" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有作业任务记录 -->
+	<select id="queryHomeworkTaskList" resultMap="homeworkTaskMap" >
+		select t_homeworkTask.* from t_homeworkTask,t_teacher ${where} and t_homeworkTask.teacherObj = t_teacher.id
+	</select>
+
+    <!-- 按照查询条件的作业任务记录数 -->
+	<select id="queryHomeworkTaskCount" resultType="int">
+		select count(*) from t_homeworkTask,t_teacher ${where} and t_homeworkTask.teacherObj = t_teacher.id
+	</select>
+
+	<!-- 根据主键查询某个作业任务记录 -->
+	<select id="getHomeworkTask" parameterType="int" resultMap="homeworkTaskMap">
+		select * from t_homeworkTask where t_homeworkTask.homeworkId = #{homeworkId}
+	</select>
+
+	<!-- 更新作业任务记录 -->
+	<update id="updateHomeworkTask" parameterType="homeworkTask">
+		update t_homeworkTask set teacherObj=#{teacherObj.id},title=#{title},content=#{content},addTime=#{addTime} where homeworkId = #{homeworkId}
+	</update>
+
+	<!-- 删除作业任务记录 -->
+	<delete id="deleteHomeworkTask" parameterType="int">
+		delete from t_homeworkTask where homeworkId=#{homeworkId}
+	</delete>
+
+</mapper>
